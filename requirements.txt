@@ -1,0 +1,5 @@
+mc.py
+python-dotenv
+ujson
+environs
+aiofile
