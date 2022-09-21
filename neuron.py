@@ -9,11 +9,19 @@ from PIL import Image, ImageDraw, ImageFont
 from vk_api.longpoll import VkLongPoll
 import textwrap
 
+from transformers import GPT2LMHeadModel, GPT2Tokenizer #GPT2
+import numpy as np
+import torch
+np.random.seed()
+torch.manual_seed
+
 vk = vk_api.VkApi(token=TOKEN)
 vk._auth_token()
 vk.get_api()
 longpoll = VkLongPoll(vk, 176680702)
 vkt=vk.get_api()
+
+tok, model = GPT2Tokenizer.from_pretrained("sberbank-ai/rugpt3small_based_on_gpt2"), GPT2LMHeadModel.from_pretrained("sberbank-ai/rugpt3small_based_on_gpt2").cuda()
 
 
 async def write_words(*args):
@@ -43,6 +51,26 @@ async def send_and_gen_sentence(*args):
         validator=mc.validators.words_count(minimal=2, maximal=15), # Мин и макс проверяймых слов
         formatter=mc.formatters.usual_syntax if USUAL_SYNTAX else None,
     )
+    if random.randint(0, 1) == 1: #GPT2
+        def generate(
+            model, tok, text,
+            do_sample=True, max_length=50, repetition_penalty=2.0,
+            top_k=40, top_p=0.95, temperature=2.0,
+            num_beams=None,
+            no_repeat_ngram_size=3
+            ):
+            input_ids = tok.encode(text, return_tensors="pt").cuda()
+            out = model.generate(
+                input_ids.cuda(),
+                max_length=max_length,
+                repetition_penalty=repetition_penalty,
+                do_sample=do_sample,
+                top_k=top_k, top_p=top_p, temperature=temperature,
+                num_beams=num_beams, no_repeat_ngram_size=no_repeat_ngram_size
+                )
+            return list(map(tok.decode, out))
+        generated = generate(model, tok, message, num_beams=10)         
+        message = generated[0]
     if not message:
         message = "База слов слишком мала для генерации"
     await get_api().messages.send(
