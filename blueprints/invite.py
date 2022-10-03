@@ -6,7 +6,6 @@ from utils import get_api, get_vk
 bp = Blueprint()
 api = get_api()
 
-
 @bp.message_handler(chat_action=types.Action.chat_invite_user)
 async def handle_invited_me(message: types.Message, _):
     group_id = await get_group_id(get_vk())

@@ -38,7 +38,7 @@ async def generate(message: types.Message, _):
 
 @bp.message_handler(commands=["w", "word"])
 async def generate(message: types.Message, _):
- 
+
     await cout_word(
         f"dialogs/dialogs{message.peer_id}.txt", message.peer_id
     )
@@ -49,6 +49,7 @@ async def generate(message: types.Message, _):
     await bugurt(
 f"dialogs/dialogs{message.peer_id}.txt", message.peer_id
 )
+
 
 @bp.message_handler(commands=["c"])
 async def generate(message: types.Message, _):
