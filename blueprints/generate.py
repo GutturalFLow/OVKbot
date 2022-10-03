@@ -125,8 +125,7 @@ vk = vk_api.VkApi(token=TOKEN)
 
 @bp.message_handler(commands=["hs", "speak"])
 async def HateSpeak(message: types.Message, _):
-    peer_id=message.peer_id   
-    
+    peer_id=message.peer_id     
     async with AIOFile(f"dialogs/hate.txt", encoding="utf-8") as f:
         text = await f.read()
         text_model = [sample.strip() for sample in text.split(",")]

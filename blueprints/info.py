@@ -4,7 +4,6 @@ from vk.bot_framework.dispatcher import Blueprint
 
 bp = Blueprint()
 
-
 @bp.message_handler(commands=["info"])
 async def info(message: types.Message, _):
     await message.answer(

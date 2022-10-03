@@ -37,6 +37,7 @@ async def write_words(*args):
             text = text.replace("\n", ". ").replace("\n\n", ". ")
             await f.write(text + ",\n") #ставить ли разделители в документе
 
+
 async def send_and_gen_sentence(*args):
     file, peer_id = args
     if not os.path.exists(file):
