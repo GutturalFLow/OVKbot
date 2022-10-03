@@ -16,6 +16,9 @@ import pyttsx3
 from aiofile import AIOFile
 import numpy as np
 import cv2
+import json
+import re
+
 bp = Blueprint()
 api = get_api()
 
@@ -157,3 +160,17 @@ async def HateSpeak(message: types.Message, _):
     peer_id=peer_id, message='', random_id=0, attachment=send
     )
 
+
+@bp.message_handler(commands=["gtp"])  #Параметры дополнительной генерации
+async def gtp(message: types.Message, _):
+    id = str(message.peer_id)
+    text = str(re.search(r'\d+', message.text).group(0))
+    a_dict = ({ 'gtp' : text},)
+    with open('dsetting.json', 'r') as f:    #добавление в файл
+        data = json.load(f) 
+        data[id] = list(a_dict) 
+    with open('dsetting.json', 'w') as f:
+        json.dump(data, f)
+    await get_api().messages.send(
+        peer_id=message.peer_id, message="Параметры дополнительной генерации текста измененны", random_id=0 
+    )

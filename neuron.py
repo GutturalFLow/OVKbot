@@ -8,10 +8,13 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 from vk_api.longpoll import VkLongPoll
 import textwrap
-
+import re
 from transformers import GPT2LMHeadModel, GPT2Tokenizer #GPT2
 import numpy as np
 import torch
+import json
+
+
 np.random.seed()
 torch.manual_seed
 
@@ -51,7 +54,10 @@ async def send_and_gen_sentence(*args):
         validator=mc.validators.words_count(minimal=2, maximal=15), # Мин и макс проверяймых слов
         formatter=mc.formatters.usual_syntax if USUAL_SYNTAX else None,
     )
-    if random.randint(0, 1) == 1: #GPT2
+    with open('dsetting.json', 'r') as f: # Считывание команды
+        data = json.load(f)
+        gtp_setting = str(*dict(*data[str(peer_id)]).values()) # Проверка команды доп генерации
+    if random.randint(0, 1) == 1 and gtp_setting == '1': #GPT2
         def generate(
             model, tok, text,
             do_sample=True, max_length=50, repetition_penalty=2.0,
@@ -69,8 +75,11 @@ async def send_and_gen_sentence(*args):
                 num_beams=num_beams, no_repeat_ngram_size=no_repeat_ngram_size
                 )
             return list(map(tok.decode, out))
+
+
         generated = generate(model, tok, message, num_beams=10)         
         message = generated[0]
+        message = re.sub("[A-Za-z0-9&;]", "", message)
     if not message:
         message = "База слов слишком мала для генерации"
     await get_api().messages.send(
