@@ -77,7 +77,6 @@ async def send_and_gen_sentence(*args):
                 )
             return list(map(tok.decode, out))
 
-
         generated = generate(model, tok, message, num_beams=10)         
         message = generated[0]
         message = re.sub("[A-Za-z0-9&;]", "", message)

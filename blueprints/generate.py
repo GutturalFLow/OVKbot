@@ -21,7 +21,6 @@ import re
 
 bp = Blueprint()
 api = get_api()
-
 vk = vk_api.VkApi(token=TOKEN)
 @bp.message_handler(commands=["g", "gen", "generate"])
 async def generate(message: types.Message, _):
